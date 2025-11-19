@@ -1,0 +1,5 @@
+# .nodemonignore
+node_modules/
+.env
+db.json
+*.log
