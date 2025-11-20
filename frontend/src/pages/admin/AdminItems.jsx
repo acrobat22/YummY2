@@ -1,15 +1,16 @@
 // frontend/src/pages/Items.js
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useItems } from '../hooks/useItems';
-import { useCategories } from '../hooks/useCategories';
-import { itemsAPI } from '../services/api';
-import useCacheStore from '../store/cacheStore';
-import { useAuth } from '../contexts/AuthContext';
-import Card from '../components/Card';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Loading from '../components/Loading';
+import { useItems } from '../../hooks/useItems';
+import { useCategories } from '../../hooks/useCategories';
+import { itemsAPI } from '../../services/api';
+import useCacheStore from '../../store/cacheStore';
+import { useAuth } from '../../contexts/AuthContext';
+import Card from '../../components/Card';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import Loading from '../../components/Loading';
+
 
 const Container = styled.div`
   max-width: 1200px;
@@ -137,42 +138,89 @@ const FilterContainer = styled.div`
   align-items: center;
 `;
 
-const Items = () => {
+/**
+ * Composant `AdminItems` - Gestion des articles (CRUD)
+ * Ce composant permet d'afficher, filtrer, ajouter, modifier et supprimer des articles.
+ * Il utilise des hooks personnalisés pour la gestion des données et des états.
+ */
+const AdminItems = () => {
+  // --- États et Hooks ---
+  // Récupère l'état d'authentification de l'utilisateur
   const { isAuthenticated } = useAuth();
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
-  const { items, loading: itemsLoading } = useItems(selectedCategoryFilter || null);
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { addItem, updateItem, removeItem } = useCacheStore();
-  
-  const [showModal, setShowModal] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '', categoryId: '' });
-  const [formError, setFormError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // État pour filtrer les articles par catégorie
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+
+  // Récupère les articles et leur état de chargement, filtrés par catégorie si nécessaire
+  const { items, loading: itemsLoading } = useItems(selectedCategoryFilter || null);
+
+  // Récupère les catégories et leur état de chargement
+  const { categories, loading: categoriesLoading } = useCategories();
+
+  // Récupère les fonctions pour manipuler les articles dans le store global
+  const { addItem, updateItem, removeItem } = useCacheStore();
+
+  // États pour la gestion du modal d'ajout/modification d'article
+  const [showModal, setShowModal] = useState(false); // Contrôle l'affichage du modal
+  const [editingItem, setEditingItem] = useState(null); // Stocke l'article en cours d'édition
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    categoryId: ''
+  }); // Stocke les données du formulaire
+  const [formError, setFormError] = useState(''); // Stocke les erreurs de formulaire
+  const [isSubmitting, setIsSubmitting] = useState(false); // Indique si le formulaire est en cours de soumission
+
+  // --- Fonctions de gestion du modal ---
+  /**
+   * Ouvre le modal pour ajouter ou éditer un article.
+   * @param {Object|null} item - L'article à éditer (null pour un nouvel article)
+   */
   const handleOpenModal = (item = null) => {
     if (item) {
+      // Mode édition : pré-remplit le formulaire avec les données de l'article
       setEditingItem(item);
       setFormData({
         name: item.name,
         description: item.description || '',
+        price: item.price,
         categoryId: item.categoryId
       });
     } else {
+      // Mode ajout : réinitialise le formulaire
       setEditingItem(null);
-      setFormData({ name: '', description: '', categoryId: '' });
+      setFormData({
+        name: '',
+        description: '',
+        price: '',
+        categoryId: ''
+      });
     }
     setShowModal(true);
     setFormError('');
   };
 
+  /**
+   * Ferme le modal et réinitialise les états.
+   */
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingItem(null);
-    setFormData({ name: '', description: '', categoryId: '' });
+    setFormData({
+      name: '',
+      description: '',
+      price: '',
+      categoryId: ''
+    });
     setFormError('');
   };
 
+  // --- Fonctions de gestion du formulaire ---
+  /**
+   * Met à jour les données du formulaire lors des changements.
+   * @param {Event} e - Événement de changement de champ
+   */
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -180,10 +228,15 @@ const Items = () => {
     });
   };
 
+  /**
+   * Soumet le formulaire pour ajouter ou modifier un article.
+   * @param {Event} e - Événement de soumission du formulaire
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
-    
+
+    // Validation des champs obligatoires
     if (!formData.name || !formData.categoryId) {
       setFormError('Name and category are required');
       return;
@@ -192,9 +245,11 @@ const Items = () => {
     setIsSubmitting(true);
     try {
       if (editingItem) {
+        // Mode édition : met à jour l'article existant
         const { item } = await itemsAPI.update(editingItem.id, formData);
         updateItem(editingItem.id, item);
       } else {
+        // Mode ajout : crée un nouvel article
         const { item } = await itemsAPI.create(formData);
         addItem(item);
       }
@@ -206,11 +261,15 @@ const Items = () => {
     }
   };
 
+  // --- Fonctions de gestion des articles ---
+  /**
+   * Supprime un article après confirmation.
+   * @param {string} id - ID de l'article à supprimer
+   */
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this item?')) {
       return;
     }
-
     try {
       await itemsAPI.delete(id);
       removeItem(id);
@@ -219,19 +278,30 @@ const Items = () => {
     }
   };
 
+  /**
+   * Récupère le nom d'une catégorie à partir de son ID.
+   * @param {string} categoryId - ID de la catégorie
+   * @returns {string} - Nom de la catégorie ou "Unknown" si non trouvé
+   */
   const getCategoryName = (categoryId) => {
     const category = categories.find(cat => cat.id === categoryId);
     return category ? category.name : 'Unknown';
   };
 
-  if (itemsLoading || categoriesLoading) return <Loading />;
+  // --- Affichage conditionnel pendant le chargement ---
+  // Affiche un composant de chargement si les données sont en cours de récupération
+  if (itemsLoading || categoriesLoading) {
+    return <Loading />;
+  }
 
+  // --- Rendu du composant ---
   return (
     <Container>
+      {/* En-tête avec titre et filtres */}
       <Header>
         <Title>Items</Title>
-        
         <FilterContainer>
+          {/* Filtre par catégorie */}
           <FormGroup style={{ margin: 0 }}>
             <Label>Filter by category:</Label>
             <Select
@@ -246,10 +316,10 @@ const Items = () => {
               ))}
             </Select>
           </FormGroup>
-          
+          {/* Bouton pour ajouter un article (visible uniquement si authentifié) */}
           {isAuthenticated && (
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               onClick={() => handleOpenModal()}
               style={{ marginTop: '1.5rem' }}
             >
@@ -259,6 +329,7 @@ const Items = () => {
         </FilterContainer>
       </Header>
 
+      {/* Affichage des articles ou message si aucun article */}
       {items.length === 0 ? (
         <Card>
           <p style={{ textAlign: 'center', color: '#6b7280' }}>
@@ -267,6 +338,7 @@ const Items = () => {
         </Card>
       ) : (
         <Grid>
+          {/* Liste des articles */}
           {items.map((item) => (
             <ItemCard key={item.id}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>
@@ -275,13 +347,14 @@ const Items = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 {item.description || 'No description'}
               </p>
+              <p style={{ color: '#4c7ad7', marginBottom: '0.5rem' }}>
+                {item.price + ' €'}
+              </p>
               <CategoryBadge>{getCategoryName(item.categoryId)}</CategoryBadge>
-              
+              {/* Boutons d'action (visible uniquement si authentifié) */}
               {isAuthenticated && (
                 <CardActions>
-                  <Button onClick={() => handleOpenModal(item)}>
-                    Edit
-                  </Button>
+                  <Button onClick={() => handleOpenModal(item)}>Edit</Button>
                   <Button variant="danger" onClick={() => handleDelete(item.id)}>
                     Delete
                   </Button>
@@ -292,16 +365,16 @@ const Items = () => {
         </Grid>
       )}
 
+      {/* Modal pour ajouter/modifier un article */}
       {showModal && (
         <Modal onClick={handleCloseModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalTitle>
               {editingItem ? 'Edit Item' : 'Add Item'}
             </ModalTitle>
-            
             {formError && <ErrorMessage>{formError}</ErrorMessage>}
-            
             <Form onSubmit={handleSubmit}>
+              {/* Champs du formulaire */}
               <Input
                 type="text"
                 name="name"
@@ -311,16 +384,23 @@ const Items = () => {
                 onChange={handleChange}
                 required
               />
-              
               <Input
                 type="text"
                 name="description"
                 label="Description"
-                placeholder="Item description (optional)"
+                placeholder="Item description"
                 value={formData.description}
                 onChange={handleChange}
               />
-              
+              <Input
+                type="number"
+                name="price"
+                label="Price"
+                placeholder="Item price"
+                value={formData.price}
+                onChange={handleChange}
+              />
+              {/* Sélecteur de catégorie */}
               <FormGroup>
                 <Label>Category *</Label>
                 <Select
@@ -337,17 +417,17 @@ const Items = () => {
                   ))}
                 </Select>
               </FormGroup>
-              
+              {/* Boutons du formulaire */}
               <ButtonGroup>
-                <Button 
-                  type="submit" 
-                  variant="primary" 
+                <Button
+                  type="submit"
+                  variant="primary"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Saving...' : 'Save'}
                 </Button>
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   onClick={handleCloseModal}
                   disabled={isSubmitting}
                 >
@@ -362,4 +442,5 @@ const Items = () => {
   );
 };
 
-export default Items;
+// Export du composant
+export default AdminItems;

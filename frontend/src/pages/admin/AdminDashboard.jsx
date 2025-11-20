@@ -1,7 +1,7 @@
 // frontend/src/pages/Home.jsx
 import styled from 'styled-components';
-import { useAuth } from '../contexts/AuthContext';
-import Card from '../components/Card';
+import { useAuth } from '../../contexts/AuthContext';
+import Card from '../../components/Card';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -35,7 +35,7 @@ const Grid = styled.div`
   margin-top: 3rem;
 `;
 
-const Home = () => {
+const AdminDashboard = () => {
   const { user, isAuthenticated } = useAuth();
 
   return (
@@ -67,4 +67,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default AdminDashboard;
