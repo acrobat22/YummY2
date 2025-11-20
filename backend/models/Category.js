@@ -2,20 +2,46 @@
 import db from "./db.js";
 import { v4 as uuidv4 } from "uuid";
 
+/**
+ * Modèle Category
+ * 
+ * Fournit des méthodes statiques pour gérer les catégories dans la base de données lowdb.
+ * Chaque catégorie peut être liée à des items, et la suppression est en cascade.
+ */
 class Category {
-  // Requête pour retourner toutes les catégories en base de données
+  /**
+   * Retourne toutes les catégories.
+   * 
+   * @async
+   * @function findAll
+   * @returns {Promise<Array>} - Liste de toutes les catégories.
+   */
   static async findAll() {
     await db.read();
     return db.data.categories;
   }
 
-  // Requête pour retourner une catégorie à partir de son identifiant
+  /**
+   * Retourne une catégorie par son identifiant.
+   * 
+   * @async
+   * @function findById
+   * @param {string} id - Identifiant unique de la catégorie.
+   * @returns {Promise<Object|null>} - La catégorie trouvée ou `null` si inexistante.
+   */
   static async findById(id) {
     await db.read();
     return db.data.categories.find((cat) => cat.id === id);
   }
 
-  // Requête pour créer une nouvelle catégorie
+  /**
+   * Crée une nouvelle catégorie.
+   * 
+   * @async
+   * @function create
+   * @param {Object} categoryData - Données de la catégorie (ex. { name: "Alimentation" }).
+   * @returns {Promise<Object>} - La nouvelle catégorie créée.
+   */
   static async create(categoryData) {
     await db.read();
 
@@ -31,7 +57,15 @@ class Category {
     return newCategory;
   }
 
-  // Requête pour mettre à jour une catégorie
+  /**
+   * Met à jour une catégorie existante.
+   * 
+   * @async
+   * @function update
+   * @param {string} id - Identifiant unique de la catégorie.
+   * @param {Object} categoryData - Données à mettre à jour.
+   * @returns {Promise<Object|null>} - La catégorie mise à jour ou `null` si inexistante.
+   */
   static async update(id, categoryData) {
     await db.read();
 
@@ -48,7 +82,16 @@ class Category {
     return db.data.categories[index];
   }
 
-  // Requête pour supprimer une catégorie (cascade pour supprimer également les items associés)
+  /**
+   * Supprime une catégorie et ses items associés (cascade).
+   * 
+   * @async
+   * @function delete
+   * @param {string} id - Identifiant unique de la catégorie.
+   * @returns {Promise<Object>} - Objet indiquant le succès et le nombre d’items supprimés.
+   * @property {boolean} success - True si la catégorie a été supprimée.
+   * @property {number} deletedItemsCount - Nombre d’items supprimés en cascade.
+   */
   static async delete(id) {
     await db.read();
 

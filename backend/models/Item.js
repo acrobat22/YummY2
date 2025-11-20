@@ -2,26 +2,60 @@
 import db from "./db.js";
 import { v4 as uuidv4 } from "uuid";
 
+/**
+ * Modèle Item
+ * 
+ * Fournit des méthodes statiques pour gérer les items dans la base de données lowdb.
+ * Chaque item est lié à une catégorie via `categoryId`.
+ */
 class Item {
-  // Requête pour retourner toutes les items en base de données
+  /**
+   * Retourne tous les items.
+   * 
+   * @async
+   * @function findAll
+   * @returns {Promise<Array>} - Liste de tous les items.
+   */
   static async findAll() {
     await db.read();
     return db.data.items;
   }
 
-  // Requête pour un item par son identifiant
+  /**
+   * Retourne un item par son identifiant.
+   * 
+   * @async
+   * @function findById
+   * @param {string} id - Identifiant unique de l'item.
+   * @returns {Promise<Object|null>} - L'item trouvé ou `null` si inexistant.
+   */
   static async findById(id) {
     await db.read();
     return db.data.items.find((item) => item.id === id);
   }
 
-  // Requête pour les items par catégories
+  /**
+   * Retourne tous les items appartenant à une catégorie donnée.
+   * 
+   * @async
+   * @function findByCategory
+   * @param {string} categoryId - Identifiant de la catégorie.
+   * @returns {Promise<Array>} - Liste des items liés à cette catégorie.
+   */
   static async findByCategory(categoryId) {
     await db.read();
     return db.data.items.filter((item) => item.categoryId === categoryId);
   }
 
-  // Requête pour créer un item en base de données
+  /**
+   * Crée un nouvel item.
+   * 
+   * @async
+   * @function create
+   * @param {Object} itemData - Données de l'item (ex. { name, categoryId }).
+   * @throws {Error} - Si la catégorie n'existe pas.
+   * @returns {Promise<Object>} - L'item créé.
+   */
   static async create(itemData) {
     await db.read();
 
@@ -46,7 +80,16 @@ class Item {
     return newItem;
   }
 
-  // Requête pour mettre à jour un item en base de données
+  /**
+   * Met à jour un item existant.
+   * 
+   * @async
+   * @function update
+   * @param {string} id - Identifiant unique de l'item.
+   * @param {Object} itemData - Données à mettre à jour.
+   * @throws {Error} - Si une nouvelle catégorie est spécifiée mais n'existe pas.
+   * @returns {Promise<Object|null>} - L'item mis à jour ou `null` si inexistant.
+   */
   static async update(id, itemData) {
     await db.read();
 
@@ -74,7 +117,14 @@ class Item {
     return db.data.items[index];
   }
 
-  // Requête pour supprimer un item en base de données
+  /**
+   * Supprime un item par son identifiant.
+   * 
+   * @async
+   * @function delete
+   * @param {string} id - Identifiant unique de l'item.
+   * @returns {Promise<boolean>} - True si un item a été supprimé, false sinon.
+   */
   static async delete(id) {
     await db.read();
 

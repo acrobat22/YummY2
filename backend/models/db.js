@@ -10,7 +10,20 @@ const file = join(__dirname, "../db.json");
 const adapter = new JSONFile(file);
 const db = new Low(adapter, {});
 
-// Initialiser la base de données
+/**
+ * Initialise la base de données lowdb.
+ * 
+ * - Lit le fichier `db.json` (créé automatiquement s'il n'existe pas).
+ * - Si la base est vide, définit une structure par défaut avec :
+ *   - `users` : tableau des utilisateurs
+ *   - `categories` : tableau des catégories
+ *   - `items` : tableau des items
+ * - Écrit la structure initiale dans le fichier.
+ * 
+ * @async
+ * @function initDb
+ * @returns {Promise<void>} - Ne retourne rien, mais initialise `db.data`.
+ */
 async function initDb() {
   await db.read();
 
@@ -24,6 +37,8 @@ async function initDb() {
   await db.write();
 }
 
+// Initialisation au démarrage
 initDb();
 
 export default db;
+

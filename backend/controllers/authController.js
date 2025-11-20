@@ -2,6 +2,25 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
+/**
+ * Contrôleur pour la gestion des auth
+ * @module authController
+ */
+
+/**
+ * Enregistre un nouvel utilisateur.
+ * 
+ * @async
+ * @function register
+ * @param {Object} req - Objet de requête Express.
+ * @param {Object} req.body - Données envoyées par le client.
+ * @param {string} req.body.email - Email de l'utilisateur.
+ * @param {string} req.body.password - Mot de passe en clair.
+ * @param {string} req.body.name - Nom de l'utilisateur.
+ * @param {Object} res - Objet de réponse Express.
+ * @returns {JSON} - Retourne un message, l'utilisateur créé (sans mot de passe) et un token JWT.
+ */
+
 export const register = async (req, res) => {
   try {
     const { email, password, name } = req.body;
@@ -31,6 +50,19 @@ export const register = async (req, res) => {
   }
 };
 
+
+/**
+ * Connecte un utilisateur existant.
+ * 
+ * @async
+ * @function login
+ * @param {Object} req - Objet de requête Express.
+ * @param {Object} req.body - Données envoyées par le client.
+ * @param {string} req.body.email - Email de l'utilisateur.
+ * @param {string} req.body.password - Mot de passe en clair.
+ * @param {Object} res - Objet de réponse Express.
+ * @returns {JSON} - Retourne un message, l'utilisateur (sans mot de passe) et un token JWT.
+ */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -72,6 +104,17 @@ export const login = async (req, res) => {
   }
 };
 
+/**
+ * Récupère le profil de l'utilisateur connecté.
+ * 
+ * @async
+ * @function getProfile
+ * @param {Object} req - Objet de requête Express.
+ * @param {Object} req.user - Utilisateur injecté par le middleware d'authentification.
+ * @param {string} req.user.id - Identifiant de l'utilisateur.
+ * @param {Object} res - Objet de réponse Express.
+ * @returns {JSON} - Retourne l'utilisateur sans mot de passe.
+ */
 export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
