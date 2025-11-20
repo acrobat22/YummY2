@@ -5,7 +5,10 @@ import { AuthProvider } from "./contexts/AuthProvider";
 import Loading from "./components/Loading";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/site/includes/Navbar";
+import Footer from './components/site/includes/Footer'
 import AdminNavbar from "./components/admin/AdminNavbar";
+import Contact from "./pages/site/Contact";
+import Error from "./components/Error"
 
 // Lazy loading des pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -24,6 +27,7 @@ function Layout({ children }) {
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
       {isAdminRoute ? <AdminNavbar /> : <Navbar />}
       {children}
+       <Footer />
     </div>
   );
 }
@@ -38,6 +42,7 @@ function App() {
               {/* --- Partie publique --- */}
               <Route path="/" element={<Home />} />
               <Route path="/items" element={<Items />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
@@ -66,6 +71,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="*" element={<Error />} />
             </Routes>
           </Layout>
         </Suspense>

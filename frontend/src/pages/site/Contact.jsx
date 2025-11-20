@@ -1,8 +1,13 @@
+import Bandeau from "../../components/site/includes/contactUs/bandeau";
+import Cta from '../../components/site/includes/promesse/Cta';
+
 const Contact = () => {
   return (
-    <div>
-        <h1>Page contact</h1>
-    </div>
+    <main className="w-screen">
+      <Cta />
+      {/* <Contenus /> */}
+      <Bandeau />
+    </main>
   );
 };
 

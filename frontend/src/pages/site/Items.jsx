@@ -1,5 +1,7 @@
 import { useItems } from "../../hooks/useItems";
 import Loading from "../../components/Loading";
+import Bandeau from "../../components/site/includes/contactUs/bandeau";
+import Cta from '../../components/site/includes/promesse/Cta';
 
 const Items = () => {
   // Récupère TOUS les items (sans filtre de catégorie et sans vérifier l'authentification)
@@ -9,8 +11,10 @@ const Items = () => {
   if (error) return <div>Erreur : {error.message}</div>;
 
   return (
-    <div>
-      <h1>Tous les articles</h1>
+    <main className="w-screen">
+      <Cta />
+      {/* <Carte /> */}
+      {/* ********** Carte *********************** */}
       {items.length === 0 ? (
         <p>Aucun article trouvé.</p>
       ) : (
@@ -24,7 +28,9 @@ const Items = () => {
           ))}
         </div>
       )}
-    </div>
+      {/* ********** Carte *********************** */}
+      <Bandeau />
+    </main>
   );
 };
 
