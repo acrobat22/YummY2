@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+    --color-red-yummy: #D2483D;
+    --color-bg-yummy: #F3F3F3;
+    /* Fonts size */
+    --text-body-desktop: 1.25rem; /* 20 px */
+    --text-h1-desktop: 4.5rem; /* 72 px */
+    --text-h2-desktop: 1.5rem; /* 24 px*/
+    --text-h1-mobile: 2.5rem; /* 40 px */
+    --text-h2-mobile: 1.25rem; /* 24 px*/
+    /* Fonts family */
+    --font-title: "Bebas neue";
+    --font-body: "Monserrat";
+}
