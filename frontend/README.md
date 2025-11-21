@@ -1,6 +1,3 @@
-# icons
-https://heroicons.com/solid
-
 
 # React + Vite
 
