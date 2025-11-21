@@ -1,14 +1,14 @@
 // frontend/src/pages/Categories.js
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useCategories } from '../hooks/useCategories';
-import { categoriesAPI } from '../services/api';
-import useCacheStore from '../store/cacheStore';
-import { useAuth } from '../contexts/AuthContext';
-import Card from '../components/Card';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Loading from '../components/Loading';
+import { useCategories } from '../../hooks/useCategories';
+import { categoriesAPI } from '../../services/api';
+import useCacheStore from '../../store/cacheStore';
+import { useAuth } from '../../contexts/AuthContext';
+import Card from '../../components/Card';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import Loading from '../../components/Loading';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -91,14 +91,14 @@ const ErrorMessage = styled.div`
   margin-bottom: 1rem;
 `;
 
-const Categories = () => {
+const AdminCategories = () => {
   const { isAuthenticated } = useAuth();
   const { categories, loading, error } = useCategories();
   const { addCategory, updateCategory, removeCategory } = useCacheStore();
   
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [formData, setFormData] = useState({ name: '', description: '', });
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -266,4 +266,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default AdminCategories;

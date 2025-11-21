@@ -76,7 +76,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(formData);
-      navigate('/');
+      navigate('/admin/');
     } catch (err) {
       setFormError(err.message);
     } finally {

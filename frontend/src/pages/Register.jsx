@@ -92,7 +92,7 @@ const Register = () => {
         email: formData.email,
         password: formData.password
       });
-      navigate('/');
+      navigate('/admin/');
     } catch (err) {
       setFormError(err.message);
     } finally {

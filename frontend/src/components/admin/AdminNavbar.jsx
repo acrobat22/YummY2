@@ -1,8 +1,8 @@
 // frontend/src/components/Navbar.js
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import Button from './Button';
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import Button from "../Button";
 
 const Nav = styled.nav`
   background: white;
@@ -36,7 +36,7 @@ const NavLink = styled(Link)`
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
-  
+
   &:hover {
     color: #3b82f6;
   }
@@ -53,19 +53,19 @@ const UserName = styled.span`
   font-weight: 500;
 `;
 
-const Navbar = () => {
+const AdminNavbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
 
   return (
     <Nav>
       <NavContainer>
         <Logo to="/">MyApp</Logo>
-        
+
         <NavLinks>
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/categories">Categories</NavLink>
-          <NavLink to="/items">Items</NavLink>
-          
+          <NavLink to="/admin/">Home</NavLink>
+          <NavLink to="/admin/categories">Categories</NavLink>
+          <NavLink to="/admin/items">Items</NavLink>
+
           {isAuthenticated ? (
             <UserInfo>
               <UserName>Hello, {user?.name}</UserName>
@@ -87,4 +87,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default AdminNavbar;
